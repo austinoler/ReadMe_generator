@@ -16,7 +16,21 @@ const questions = [
 function writeToFile(fileName, data) {}
 
 // TODO: Create a function to initialize app
-function init() {}
+function init() {
+    inquirer
+      .prompt(questions)
+      .then((answers) => {
+        const readmeContent = generateMarkdown(answers);
+  
+        // Write the readmeContent to a file using the file system (fs) module
+        fs.writeFileSync('README.md', readmeContent);
+  
+        console.log('README.md successfully generated!');
+      })
+      .catch((error) => console.error(error));
+  }
+  
+  init();
 
 // Function call to initialize app
 init();
