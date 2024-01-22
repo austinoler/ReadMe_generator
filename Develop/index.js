@@ -1,6 +1,8 @@
-// TODO: Include packages needed for this application
 const inquirer = require('inquirer');
-const generateMarkdown = require('./utils/generateMarkdown');
+const fs = require('fs');
+const generateMarkdown = require('../Develop/utils/generateMarkdown');
+const util = require('util');
+console.log('Current working directory:', __dirname);
 
 // TODO: Create an array of questions for user input
 const questions = [
@@ -50,27 +52,42 @@ const questions = [
       name: 'email',
       message: 'What is your email address?',
     },
-  ];
+];
 
-// TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
+function writeToFile(fileName, data) {
+  fs.writeFile(fileName, data, err => {
+      if (err) {
+          return console.log(err);
+      }
+      console.log("Success!")
+  });
+}
 
-// TODO: Create a function to initialize app
-function init() {
-    inquirer
-      .prompt(questions)
-      .then((answers) => {
-        const readmeContent = generateMarkdown(answers);
+const writeFileAsync = util.promisify(writeToFile);
+
+// How the cmd starts
+
+// function to initialize program
+async function init() {
+  try{
+      // Answer the Questions
+      const userResponse = await inquirer.prompt(questions);
+      console.log('Your Response: ', userResponse);
+      console.log("Retrieving your GitHub data next");
+
+
+      const markdown = generateMarkdown(userResponse);
+      console.log(markdown);
+
+      await writeFileAsync('./ExampleREADME.md', markdown);
+      console.log("README is Completed....Now sit back and enjoy the Coffee :)");
+
   
-        // Write the readmeContent to a file using the file system (fs) module
-        fs.writeFileSync('README.md', readmeContent);
-  
-        console.log('README.md successfully generated!');
-      })
-      .catch((error) => console.error(error));
+  } catch  (error) {
+      console.error();
   }
-  
-  init();
 
-// Function call to initialize app
+}
+
+// function call to initialize program
 init();
